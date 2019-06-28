@@ -9,7 +9,11 @@ public class Result<T> {
         return new Result<>(cm.getCode(), cm.getMsg(), data);
     }
 
-    public static<T> Result<T> failure(CodeMsg cm) {
+    public static<T> Result<T> success(CodeMsg cm) {
+        return new Result<>(cm.getCode(), cm.getMsg());
+    }
+
+    public static<T> Result<T> error(CodeMsg cm) {
         return new Result<>(cm.getCode(), cm.getMsg());
     }
 

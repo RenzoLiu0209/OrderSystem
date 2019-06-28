@@ -23,7 +23,7 @@ public class MD5Util {
     }
 
     public static void main(String[] args) {
-//        System.out.println(inputPassToDBPass("12345", "1a2b3c4d"));
-        System.out.println(inputPassToFormPass("12345")); //8e812d5f58afd2d54f56c691dc8dc2cd
+        System.out.println(inputPassToDBPass("12345", "1a2b3c4d"));
+        // System.out.println(inputPassToFormPass("12345")); //8e812d5f58afd2d54f56c691dc8dc2cd
     }
 }

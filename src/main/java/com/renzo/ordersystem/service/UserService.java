@@ -2,7 +2,6 @@ package com.renzo.ordersystem.service;
 
 import com.renzo.ordersystem.dao.UserDao;
 import com.renzo.ordersystem.domain.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

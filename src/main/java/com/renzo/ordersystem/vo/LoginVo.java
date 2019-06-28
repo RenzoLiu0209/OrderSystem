@@ -1,7 +1,18 @@
 package com.renzo.ordersystem.vo;
 
+import com.renzo.ordersystem.validator.isMobile;
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.NotNull;
+
 public class LoginVo {
+
+    @NotNull
+    @isMobile
     String mobile;
+
+    @NotNull
+    @Length(min = 5)
     String password;
 
     public String getMobile() {

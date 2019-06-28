@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Login</title>
+    <title>Order System</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <!-- jquery -->
     <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
@@ -51,7 +51,6 @@
                 <button class="btn btn-primary btn-block" type="submit" onclick="login()">Login</button>
             </div>
         </div>
-
     </form>
     <script>
         function login(){
@@ -75,6 +74,12 @@
                     password: password
                 },
                 success: function(data) {
+                    layer.closeAll();
+                    if (data.code == 508) {
+                        layer.msg("Login Success");
+                    } else {
+                        layer.msg(data.msg);
+                    }
                     layer.closeAll();
                     console.log(data);
                 },
