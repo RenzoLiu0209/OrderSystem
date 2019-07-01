@@ -45,8 +45,6 @@ public class MiaoshaController {
             model.addAttribute("errmsg", CodeMsg.BEEN_BOUGHT.getMsg());
             return "miaosha_fail";
         }
-
-
         OrderInfo orderInfo = miaoshaService.miaosha(user, goods);
         model.addAttribute("orderInfo", orderInfo);
         model.addAttribute("goods", goods);
