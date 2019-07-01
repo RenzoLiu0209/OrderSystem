@@ -16,11 +16,14 @@ public enum CodeMsg {
     PASSWORD_CORRECT(506, "Password is right"),
     PASSWORD_WRONG(507, "Password is wrong"),
     LOGIN_SUCCESS(508, "Login success"),
-    LOGIN_FAILURE(509, "Username or password is wrong");
+    LOGIN_FAILURE(509, "Username or password is wrong"),
 
 
 
-    //
+    // Order-placing
+    SOLID_OUT(580, "Goods have been sold out"),
+    BEEN_BOUGHT(581, "This good has been bought by current user"),
+    ORDER_PLACED(582, "Order has been placed");
 
     private int code;
     private String msg;

@@ -43,7 +43,8 @@ public class MiaoshaUserService {
         String saltDB = user.getSalt();
         String calcPass = MD5Util.formPassToDBPass(formPass, saltDB);
         if (calcPass.equals(dbPass)) {
-            addCookie(response, user);
+            String token = UUIDUtil.getUuid();
+            addCookie(response, token, user);
             return;
         } else {
             throw new GlobalException(CodeMsg.PASSWORD_WRONG);
@@ -57,13 +58,12 @@ public class MiaoshaUserService {
         MiaoshaUser user = redisService.get(MiaoshaUserKey.getByToken, token, MiaoshaUser.class);
         // Expand the expired seconds
         if (user != null) {
-            addCookie(response, user);
+            addCookie(response, token, user);
         }
         return user;
     }
 
-    private void addCookie(HttpServletResponse response, MiaoshaUser user) {
-        String token = UUIDUtil.getUuid();
+    private void addCookie(HttpServletResponse response, String token, MiaoshaUser user) {
         redisService.set(MiaoshaUserKey.getByToken, token, user);
         Cookie cookie = new Cookie(COOKIE_NAME_TOEKN, token);
         cookie.setMaxAge(MiaoshaUserKey.getByToken.getExpireseconds());
