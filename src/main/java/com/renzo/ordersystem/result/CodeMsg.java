@@ -23,7 +23,8 @@ public enum CodeMsg {
     // Order-placing
     SOLID_OUT(580, "Goods have been sold out"),
     BEEN_BOUGHT(581, "This good has been bought by current user"),
-    ORDER_PLACED(582, "Order has been placed");
+    ORDER_PLACED(582, "Order has been placed"),
+    ORDER_NOT_EXIST(583, "Order doesn't exist");
 
     private int code;
     private String msg;

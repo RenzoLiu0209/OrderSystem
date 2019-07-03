@@ -80,6 +80,17 @@ public class RedisService {
         }
     }
 
+    public boolean del(KeyPrefix prefix, String key) {
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            String realKey = prefix.getPrefix() + key;
+            return jedis.del(realKey) > 0;
+        } finally {
+            returnToPool(jedis);
+        }
+    }
+
     private <T> T stringToBean(String str, Class<T> clazz) {
         if (str == null || str.length() <= 0 || clazz == null) {
             return null;

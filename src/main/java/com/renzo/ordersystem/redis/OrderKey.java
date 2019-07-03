@@ -1,7 +1,8 @@
 package com.renzo.ordersystem.redis;
 
 public class OrderKey extends BasePrefix {
-    public OrderKey(int expireseconds, String prefix) {
-        super(expireseconds, prefix);
+    public OrderKey(String prefix) {
+        super(prefix);
     }
+    public static OrderKey getByUserIdGoodsId = new OrderKey("moug");
 }

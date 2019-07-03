@@ -5,7 +5,11 @@ import com.renzo.ordersystem.dao.OrderDao;
 import com.renzo.ordersystem.domain.MiaoshaOrder;
 import com.renzo.ordersystem.domain.MiaoshaUser;
 import com.renzo.ordersystem.domain.OrderInfo;
+import com.renzo.ordersystem.redis.OrderKey;
+import com.renzo.ordersystem.redis.RedisService;
 import com.renzo.ordersystem.vo.GoodsVo;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,8 +22,16 @@ public class OrderService {
     @Resource
     OrderDao orderDao;
 
-    public MiaoshaOrder getMiaoshaOrderByUserIdGoodsId(long userid, long goodsId) {
-        return orderDao.getMiaoshaOrderByUserIdGoodsId(userid, goodsId);
+    @Autowired
+    RedisService redisService;
+
+    public MiaoshaOrder getMiaoshaOrderByUserIdGoodsId(long userId, long goodsId) {
+//        return orderDao.getMiaoshaOrderByUserIdGoodsId(userid, goodsId);
+        return redisService.get(OrderKey.getByUserIdGoodsId, "" + userId + "_" + goodsId, MiaoshaOrder.class);
+    }
+
+    public OrderInfo getOrderById(long orderId) {
+        return orderDao.getOrderById(orderId);
     }
 
     @Transactional
@@ -40,6 +52,7 @@ public class OrderService {
         miaoshaOrder.setOrderId(orderId);
         miaoshaOrder.setUserId(user.getId());
         orderDao.insertMiaoshaOrder(miaoshaOrder);
+        redisService.set(OrderKey.getByUserIdGoodsId, "" + user.getId() + "_" + goods.getId(), miaoshaOrder);
         return orderInfo;
     }
 }
