@@ -23,7 +23,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/miaosha")
@@ -44,6 +46,8 @@ public class MiaoshaController implements InitializingBean {
     @Autowired
     MQSender sender;
 
+    private Map<Long, Boolean> localOverMap = new HashMap<>();
+
     public static int count = 0;
     private static Logger log = LoggerFactory.getLogger(MiaoshaController.class);
 
@@ -55,6 +59,7 @@ public class MiaoshaController implements InitializingBean {
         }
         for (GoodsVo good: goodsList) {
             redisService.set(GoodsKey.getMiaoshaGoodsStock, "" + good.getId(), good.getStockCount());
+            localOverMap.put(good.getId(), false);
         }
     }
 
@@ -65,8 +70,13 @@ public class MiaoshaController implements InitializingBean {
             return Result.error(CodeMsg.USER_NOT_EXIST);
         }
 
+        if (localOverMap.get(goodsId)) {
+            return Result.error(CodeMsg.SOLID_OUT);
+        }
+
         long stock = redisService.decr(GoodsKey.getMiaoshaGoodsStock, "" + goodsId);
         if (stock < 0) {
+            localOverMap.put(goodsId, true);
             return Result.error(CodeMsg.SOLID_OUT);
         }
 
