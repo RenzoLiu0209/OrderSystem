@@ -40,14 +40,13 @@ public class RedisService {
             } else {
                 jedis.setex(realKey, seconds, str);
             }
-            jedis.set(realKey, str);
             return true;
         } finally {
             returnToPool(jedis);
         }
     }
 
-    public <T> Long exists(KeyPrefix prefix, String key) {
+    public <T> Long incr(KeyPrefix prefix, String key) {
         Jedis jedis = null;
         try {
             jedis = jedisPool.getResource();
@@ -69,7 +68,7 @@ public class RedisService {
         }
     }
 
-    public <T> boolean incr(KeyPrefix prefix, String key) {
+    public <T> boolean exists(KeyPrefix prefix, String key) {
         Jedis jedis = null;
         try {
             jedis = jedisPool.getResource();
@@ -91,7 +90,8 @@ public class RedisService {
         }
     }
 
-    private <T> T stringToBean(String str, Class<T> clazz) {
+    @SuppressWarnings("unchecked")
+    public static <T> T stringToBean(String str, Class<T> clazz) {
         if (str == null || str.length() <= 0 || clazz == null) {
             return null;
         }
@@ -105,7 +105,7 @@ public class RedisService {
         return JSON.toJavaObject(JSON.parseObject(str), clazz);
     }
 
-    private <T> String beanToString(T value) {
+    public static <T> String beanToString(T value) {
         if (value == null) {
             return null;
         }
