@@ -2,7 +2,6 @@ package com.renzo.ordersystem.controller;
 
 import com.renzo.ordersystem.domain.MiaoshaOrder;
 import com.renzo.ordersystem.domain.MiaoshaUser;
-import com.renzo.ordersystem.domain.OrderInfo;
 import com.renzo.ordersystem.rabbitmq.MQSender;
 import com.renzo.ordersystem.rabbitmq.MiaoshaMessage;
 import com.renzo.ordersystem.redis.GoodsKey;
