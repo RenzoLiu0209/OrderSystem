@@ -1,5 +1,6 @@
 package com.renzo.ordersystem.controller;
 
+import com.renzo.ordersystem.access.AccessLimit;
 import com.renzo.ordersystem.domain.MiaoshaOrder;
 import com.renzo.ordersystem.domain.MiaoshaUser;
 import com.renzo.ordersystem.rabbitmq.MQSender;
@@ -17,11 +18,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,11 +65,16 @@ public class MiaoshaController implements InitializingBean {
         }
     }
 
-    @RequestMapping(value = "/do_miaosha", method = RequestMethod.POST)
+    @RequestMapping(value = "/{path}/do_miaosha", method = RequestMethod.POST)
     @ResponseBody
-    public Result doMiaosha(MiaoshaUser user, @RequestParam("goodsId") long goodsId) {
+    public Result doMiaosha(MiaoshaUser user, @RequestParam("goodsId") long goodsId, @PathVariable("path") String path) {
         if (user == null) {
             return Result.error(CodeMsg.USER_NOT_EXIST);
+        }
+
+        boolean check = miaoshaService.checkPath(user, goodsId, path);
+        if (!check) {
+            return Result.error(CodeMsg.REQUEST_ILLEGAL);
         }
 
         if (localOverMap.get(goodsId)) {
@@ -115,5 +123,41 @@ public class MiaoshaController implements InitializingBean {
         }
         long result = miaoshaService.getMiaoshaResult(user.getId(), goodsId);
         return Result.success(CodeMsg.SUCCESS, result);
+    }
+
+    @AccessLimit(seconds = 5, maxCount = 5, needLogin = true)
+    @RequestMapping(value = "/path", method = RequestMethod.GET)
+    @ResponseBody
+    public Result getMiaoshaPath(HttpServletRequest request, MiaoshaUser user,
+                                 @RequestParam("goodsId") long goodsId,
+                                 @RequestParam("verifyCode") int verifyCode) {
+        if (user == null) {
+            return Result.error(CodeMsg.USER_NOT_EXIST);
+        }
+        boolean check = miaoshaService.checkVerifyCode(user, goodsId, verifyCode);
+        if (!check) {
+            return Result.error(CodeMsg.REQUEST_ILLEGAL);
+        }
+        String path = miaoshaService.createMiaoshaPath(user, goodsId);
+        return Result.success(CodeMsg.SUCCESS, path);
+    }
+
+    @RequestMapping(value = "/verifyCode", method = RequestMethod.GET)
+    @ResponseBody
+    public Result getMiaoshaVerifyCod(HttpServletResponse response, MiaoshaUser user, @RequestParam("goodsId") long goodsId) {
+        if (user == null) {
+            return Result.error(CodeMsg.USER_NOT_EXIST);
+        }
+        try {
+            BufferedImage image  = miaoshaService.createVerifyCode(user, goodsId);
+            OutputStream out = response.getOutputStream();
+            ImageIO.write(image, "JPEG", out);
+            out.flush();
+            out.close();
+            return null;
+        }catch(Exception e) {
+            e.printStackTrace();
+            return Result.error(CodeMsg.MIAOSHA_FAIL);
+        }
     }
 }

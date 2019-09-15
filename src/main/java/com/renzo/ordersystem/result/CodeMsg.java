@@ -6,6 +6,9 @@ public enum CodeMsg {
     SUCCESS(200, "Success"),
     FAILURE(500, "Server Error"),
     BIND_ERROR(520, "Parameters exception"),
+    REQUEST_ILLEGAL(530, "Illegal request"),
+    ACCESS_LIMIT_REACH (550, "Limited Access"),
+    MIAOSHA_FAIL (540, "Miaosha fail"),
 
     // Login
     MOBILE_EMPTY(501, "Phone number cannot be empty"),
